@@ -58,18 +58,7 @@ export default {
   components: {
     VueGoogleAutocomplete,
   },
-  mounted() {
-    this.getSites({
-      location: {
-        latitude: 42.8864,
-        longitude: -78.8784,
-      },
-      keyword: 'restaurants',
-      radius: this.radius,
-    }).then(() => {
-      this.getSiteDetails();
-    });
-  },
+  mounted() {},
   data() {
     return {
       location: null,
