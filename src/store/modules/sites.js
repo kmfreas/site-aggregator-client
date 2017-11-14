@@ -1,11 +1,9 @@
+import Queue from 'promise-queue';
 import googleApi from '../../api/google-places';
 import screenshotApi from '../../api/screenshots';
 
-const perPage = 9;
-
 const state = {
   sites: [],
-  page: 1,
 };
 
 const mutations = {
@@ -29,27 +27,27 @@ const actions = {
   getSites(context, params) {
     return new Promise((resolve) => {
       googleApi.getPlaces(params).then((response) => {
+        const queue = new Queue(1, Infinity);
         response.forEach((element) => {
           const thisElement = element;
           thisElement.website = null;
           thisElement.img = null;
+          context.dispatch('getSiteDetails', { id: element.place_id, queue });
         });
         context.commit('saveSites', response);
         resolve();
       });
     });
   },
-  getSiteDetails(context) {
-    for (let x = 0; x < state.page * perPage; x += 1) {
-      googleApi.getPlaceDetails(state.sites[x]).then((details) => {
-        if (details.website !== undefined) {
-          context.commit('updateSite', details);
-          context.dispatch('getScreenshot', details);
-        } else {
-          context.commit('removeSite', details);
-        }
-      });
-    }
+  getSiteDetails(context, data) {
+    data.queue.add(() => googleApi.getPlaceDetails(data.id)).then((response) => {
+      if (response.website !== undefined) {
+        context.commit('updateSite', response);
+        context.dispatch('getScreenshot', response);
+      } else {
+        context.commit('removeSite', response);
+      }
+    });
   },
   getScreenshot(context, data) {
     const item = data;

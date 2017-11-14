@@ -82,8 +82,6 @@ export default {
         location: this.location,
         keyword: this.keyword,
         radius: this.radius,
-      }).then(() => {
-        this.getSiteDetails();
       });
     },
     ...mapActions({
