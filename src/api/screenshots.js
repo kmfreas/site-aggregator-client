@@ -7,6 +7,10 @@ export default {
       method: 'get',
       url: this.endpoint + encodeURIComponent(url),
       responseType: 'blob',
+      params: {
+        width: 1400,
+        height: 1400,
+      },
     });
   },
 };
