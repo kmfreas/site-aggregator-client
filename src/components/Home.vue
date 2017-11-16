@@ -10,9 +10,18 @@
         </div>
       </div>
     </section>
-    <div class="container">
+    <div class="container page-content">
       <site-list></site-list>
     </div>
+    <footer class="footer">
+      <div class="container">
+        <img style="max-width: 200px;" src="static/google.png" alt="">
+        <br>
+        Written in Vue JS
+        <br>
+        <a target="_blank" href="http://krez.me">krez.me</a>
+      </div>
+    </footer>
   </div>
 </template>
 
