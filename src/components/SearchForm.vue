@@ -1,5 +1,5 @@
 <template>
-  <div class="search-form">
+  <form class="search-form" @submit.prevent>
     <div class="field">
       <label for="keyword" class="label has-text-white">Search For</label>
       <div class="control has-icons-left has-icons-right">
@@ -42,17 +42,20 @@
     </div>
     <div class="field">
       <div class="control">
-        <button class="button is-info" :disabled="!submittable" @click="search">
+        <button class="button is-info" :disabled="!submittable" @click="search" v-if="displayButton === 'search'">
           Search
+        </button>
+        <button class="button is-warning" @click="cancel" v-if="displayButton === 'cancel'">
+          Cancel
         </button>
       </div>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
 import VueGoogleAutocomplete from 'vue-google-autocomplete';
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -64,32 +67,40 @@ export default {
       location: null,
       keyword: null,
       radius: 10,
+      searchStarted: false,
     };
   },
   computed: {
     submittable() {
       return (this.location !== null) && (this.keyword !== null);
     },
+    displayButton() {
+      return !this.searchComplete && this.searchStarted ? 'cancel' : 'search';
+    },
+    ...mapGetters({
+      searchComplete: 'searchComplete',
+    }),
   },
   methods: {
-    getLocation(addressData, placeResultData) {
-      console.log(addressData, placeResultData);
+    getLocation(addressData) {
       this.location = addressData;
     },
     search() {
-      this.clearSites();
+      this.cancel();
+      this.searchStarted = true;
       this.getSites({
         location: this.location,
         keyword: this.keyword,
         radius: this.radius,
       });
     },
+    cancel() {
+      this.searchStarted = false;
+      this.clear();
+    },
     ...mapActions({
       getSites: 'getSites',
-      getSiteDetails: 'getSiteDetails',
-    }),
-    ...mapMutations({
-      clearSites: 'clearSites',
+      clear: 'clear',
     }),
   },
 };

@@ -1,14 +1,13 @@
 <template>
   <section class="site-list">
-    <div class="loading" v-if="!sites.length" style="margin-top: 3em"></div>
     <div class="level" v-if="sites.length">
       <div class="level-left">
         <div class="level-item">
-          <!-- <button class="button is-primary" @click="openAll" title="Allow popups if asked">
-            Open All in {{sites.length}} Tabs
-          </button> -->
         </div>
       </div>
+    </div>
+    <div class="notification is-warning" v-if="error">
+      {{error}}
     </div>
     <div class="columns is-multiline" v-if="sites.length">
       <div class="column is-4" v-for="(site, index) in sites" :key="site.id" v-if="site.website">
@@ -53,6 +52,7 @@ export default {
   computed: {
     ...mapGetters({
       sites: 'getSites',
+      error: 'getError',
     }),
   },
   methods: {

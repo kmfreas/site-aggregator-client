@@ -1,36 +1,37 @@
 /* eslint-disable no-new */
 import bus from '../bus';
+import Id from '../id';
 
 export default {
   service: new google.maps.places.PlacesService(document.createElement('div')),
-  getPlaces(params) {
-    return new Promise((resolve) => {
-      const results = [];
+  getPlaces(id, params) {
+    return new Promise((resolve, reject) => {
       const formattedParams = {
         location: new google.maps.LatLng(params.location.latitude, params.location.longitude),
         keyword: [params.keyword],
         radius: params.radius * 1000,
       };
-      this.getPlaceList(formattedParams, this.service).then((response) => {
+      this.getPlaceList(id, formattedParams, this.service).then((response) => {
         resolve(response);
       }, (reason) => {
-        console.log(reason);
-        resolve(results);
+        reject(reason);
       });
     });
   },
-  getPlaceList(params) {
+  getPlaceList(id, params) {
     return new Promise((resolve, reject) => {
       this.service.nearbySearch(params, (results, status, pagination) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          bus.$emit('sitesLoaded', results);
-          if (pagination.hasNextPage) {
-            pagination.nextPage();
+        if (id === Id.get()) {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            bus.$emit('sitesLoaded', results);
+            if (pagination.hasNextPage) {
+              pagination.nextPage();
+            } else {
+              resolve();
+            }
           } else {
-            resolve();
+            reject(status);
           }
-        } else {
-          reject(status);
         }
       });
     });
