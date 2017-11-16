@@ -1,21 +1,23 @@
 <template>
   <section class="site-list">
-    <div class="level">
+    <div class="loading" v-if="!sites.length" style="margin-top: 3em"></div>
+    <div class="level" v-if="sites.length">
       <div class="level-left">
         <div class="level-item">
-          <button class="button is-primary" @click="openAll" title="Allow popups if asked">
+          <!-- <button class="button is-primary" @click="openAll" title="Allow popups if asked">
             Open All in {{sites.length}} Tabs
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
-    <div class="columns is-multiline">
-      <div class="column is-4" v-for="(site, index) in sites" :key="site.id">
+    <div class="columns is-multiline" v-if="sites.length">
+      <div class="column is-4" v-for="(site, index) in sites" :key="site.id" v-if="site.website">
         <div class="card">
           <div class="card-image">
-            <div class="img-placeholder notification is-dark loading" v-if="!site.img"></div>
-            <figure class="image" v-if="site.img">
-              <img :src="site.img" alt="">
+            <figure class="image is-square" :class="{'loading': !site.img}">
+              <a :href="site.website" target="_blank" v-if="site.img">
+                <img :src="site.img" alt="" width="1000" height="1000">
+              </a>
             </figure>
           </div>
           <div class="card-content">
@@ -25,7 +27,7 @@
             <h3 class="subtitle is-6">
               {{site.vicinity}}
             </h3>
-            <div class="field is-grouped is-grouped-multiline">
+            <div class="field is-grouped is-grouped-multiline" v-if="site.rating">
               <div class="control">
                 <div class="tags has-addons">
                   <span class="tag is-light">Rating</span>
@@ -66,13 +68,5 @@ export default {
 <style>
 .site-list {
   padding: 2em 0;
-}
-
-.img-placeholder.notification {
-  padding: 0;
-  padding-bottom: 100%;
-  border-radius: 0;
-  display: block;
-  margin-bottom: 0;
 }
 </style>

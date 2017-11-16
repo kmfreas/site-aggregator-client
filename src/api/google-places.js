@@ -1,8 +1,9 @@
 /* eslint-disable no-new */
+import bus from '../bus';
+
 export default {
-  places: [],
+  service: new google.maps.places.PlacesService(document.createElement('div')),
   getPlaces(params) {
-    this.places = [];
     return new Promise((resolve) => {
       const results = [];
       const formattedParams = {
@@ -10,8 +11,7 @@ export default {
         keyword: [params.keyword],
         radius: params.radius * 1000,
       };
-      const service = new google.maps.places.PlacesService(document.createElement('div'));
-      this.getPlaceList(formattedParams, service).then((response) => {
+      this.getPlaceList(formattedParams, this.service).then((response) => {
         resolve(response);
       }, (reason) => {
         console.log(reason);
@@ -19,15 +19,15 @@ export default {
       });
     });
   },
-  getPlaceList(params, service) {
+  getPlaceList(params) {
     return new Promise((resolve, reject) => {
-      service.nearbySearch(params, (results, status, pagination) => {
+      this.service.nearbySearch(params, (results, status, pagination) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-          this.places = this.places.concat(results);
+          bus.$emit('sitesLoaded', results);
           if (pagination.hasNextPage) {
             pagination.nextPage();
           } else {
-            resolve(this.places);
+            resolve();
           }
         } else {
           reject(status);
@@ -38,8 +38,7 @@ export default {
   getPlaceDetails(id) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const service = new google.maps.places.PlacesService(document.createElement('div'));
-        service.getDetails({
+        this.service.getDetails({
           placeId: id,
         }, (place, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
