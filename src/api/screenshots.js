@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const endpoint = process.env.NODE_ENV === 'development' ? 'http://localhost:3100/screenshot/' : 'http://rendertron.krez.me/screenshot/';
+
 export default {
-  endpoint: 'http://localhost:8000/screenshot/',
+  endpoint,
   getScreenshot(url) {
     return axios({
       method: 'get',
