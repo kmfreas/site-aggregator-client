@@ -1,6 +1,10 @@
-# site-aggregator-client
+# Site Aggregator Client
 
 > A Vue.js project
+
+A simple tool to find well designed websites by industry and location.
+
+[Demo &rarr;](http://aggregator.krez.me)
 
 ## Build Setup
 
